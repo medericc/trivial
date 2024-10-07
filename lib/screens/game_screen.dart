@@ -59,11 +59,11 @@ class GameScreen extends StatelessWidget {
 
             SizedBox(height: 20.0),
             Text(
-              'Score Équipe 1: ${gameProvider.scoreEquipe1} - Camemberts: ${gameProvider.getCamembertProgress(1)}',
+              'Camemberts: ${gameProvider.getCamembertProgress(1)}',
               style: TextStyle(fontSize: 18.0),
             ),
             Text(
-              'Score Équipe 2: ${gameProvider.scoreEquipe2} - Camemberts: ${gameProvider.getCamembertProgress(2)}',
+              'Camemberts: ${gameProvider.getCamembertProgress(2)}',
               style: TextStyle(fontSize: 18.0),
             ),
           ],
