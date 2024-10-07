@@ -12,59 +12,128 @@ class GameScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Tour de l\'équipe ${gameProvider.currentTeam}'),
+        backgroundColor: Colors.deepPurple,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0), // Réduction du padding général
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              currentQuestion.questionText,
-              style: TextStyle(fontSize: 24.0),
+            // Bloc pour la question avec bordures arrondies
+            Container(
+              padding: const EdgeInsets.all(12.0), // Moins de padding
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.shade50,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Text(
+                currentQuestion.questionText,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
-            SizedBox(height: 20.0),
+            SizedBox(height: 20.0), // Réduction de l'espacement
 
-            // Ajouter le compteur de bonnes réponses avant la question camembert
+            // Progression avant la question camembert
             Text(
-              'Bonnes réponses avant une question camembert: ${gameProvider.correctAnswersInARow} / 3',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              'Avant camembert : ${gameProvider.correctAnswersInARow} bonnes réponses sur ${GameProvider.CAMEMBERT_REQUIRED_ANSWERS}',
+              style: TextStyle(
+                fontSize: 16.0, // Taille de texte réduite
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
+              ),
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20.0),
+            SizedBox(height: 20.0), // Réduction de l'espacement
 
-            // Affichage des options de réponse
-            ...currentQuestion.options.map((option) {
-              return ElevatedButton(
-                onPressed: () {
-                  gameProvider.answerQuestion(option, context);
+            // Affichage des options en boutons carrés
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2, // Deux colonnes
+                crossAxisSpacing: 8.0, // Moins d'espacement
+                mainAxisSpacing: 8.0, // Moins d'espacement
+                childAspectRatio: 1.2, // Ajuster le ratio pour un meilleur fit
+                children: currentQuestion.options.map((option) {
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple.shade200,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0), // Réduction du padding
+                    ),
+                    onPressed: () {
+                      gameProvider.answerQuestion(option, context);
 
-                  if (gameProvider.hasWon(gameProvider.currentTeam)) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => ResultScreen()),
-                    );
-                  } else if (gameProvider.hasNextQuestion) {
-                    // Vérifie si on doit poser une question camembert ou continuer
-                    if (gameProvider.correctAnswersInARow < GameProvider.CAMEMBERT_REQUIRED_ANSWERS) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => GameScreen()),
-                      );
-                    }
-                    // Sinon, attendre la question camembert
-                  }
-                },
-                child: Text(option),
-              );
-            }).toList(),
-
-            SizedBox(height: 20.0),
-            Text(
-              'Camemberts: ${gameProvider.getCamembertProgress(1)}',
-              style: TextStyle(fontSize: 18.0),
+                      if (gameProvider.hasWon(gameProvider.currentTeam)) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => ResultScreen()),
+                        );
+                      } else if (gameProvider.hasNextQuestion) {
+                        if (gameProvider.correctAnswersInARow < GameProvider.CAMEMBERT_REQUIRED_ANSWERS) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => GameScreen()),
+                          );
+                        }
+                      }
+                    },
+                    child: Text(
+                      option,
+                      style: TextStyle(fontSize: 16.0, color: Colors.white), // Texte un peu plus petit
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
-            Text(
-              'Camemberts: ${gameProvider.getCamembertProgress(2)}',
-              style: TextStyle(fontSize: 18.0),
+            // Réduire l'écart ici
+            SizedBox(height: 5.0), // Très peu d'espacement maintenant
+
+            // Affichage des camemberts des équipes
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajustement du padding
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        'Équipe 1',
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Camemberts : ${gameProvider.getCamembertProgress(1)}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Équipe 2',
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Camemberts : ${gameProvider.getCamembertProgress(2)}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),

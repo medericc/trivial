@@ -110,7 +110,7 @@ void chooseCamembertCategory(BuildContext context) {
 
 void _askCamembertQuestion(String category, BuildContext context) {
   List<Question> categoryQuestions = questions.where((q) => q.category == category).toList();
- 
+
   if (categoryQuestions.isNotEmpty) {
     Question camembertQuestion = categoryQuestions[_random.nextInt(categoryQuestions.length)];
 
@@ -125,18 +125,18 @@ void _askCamembertQuestion(String category, BuildContext context) {
             children: [
               Text(camembertQuestion.questionText),
               SizedBox(height: 20.0),
-              // Affichage des options de réponses
               ...camembertQuestion.options.map((option) {
                 return ElevatedButton(
                   onPressed: () {
                     bool isCorrect = option == camembertQuestion.correctAnswer;
-                    
+
                     if (isCorrect) {
                       _addCamembertToCurrentTeam(); // Ajouter le camembert
                       Navigator.pop(context); // Fermer la modal après bonne réponse
                       Navigator.pop(context); // Fermer la modal de choix des catégories
                     } else {
-                      _switchTeam(); // Passer à l'autre équipe si la réponse est incorrecte
+                      _correctAnswersInARow = 0; // Réinitialiser le compteur à 0 après mauvaise réponse
+                      _switchTeam(); // Passer à l'autre équipe
                       Navigator.pop(context); // Fermer la modal après mauvaise réponse
                       Navigator.pop(context); // Fermer la modal de choix des catégories
                     }
