@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/question.dart';
 import './questions.dart';
+import '../screens/game_screen.dart'; // Ajuster le chemin si nécessaire
+
 class GameProvider with ChangeNotifier {
 
   int _currentQuestionIndex = 0;
@@ -23,12 +25,13 @@ class GameProvider with ChangeNotifier {
  int get currentTeam => _currentTeam;
   Question get currentQuestion => questions[_currentQuestionIndex];
   int getCamembertProgress(int team) {
-    return team == 1 ? _camembertEquipe1[team]!.length : _camembertEquipe2[team]!.length;
-  }
+  return team == 1 ? _camembertEquipe1[1]!.length : _camembertEquipe2[2]!.length;
+}
 
-  bool hasWon(int team) {
-    return getCamembertProgress(team) >= MAX_CAMEMBERTS;
-  }
+bool hasWon(int team) {
+  return getCamembertProgress(team) >= MAX_CAMEMBERTS;
+}
+
 
   Question getRandomQuestion() {
     List<Question> availableQuestions = questions.where((question) {
@@ -45,6 +48,31 @@ class GameProvider with ChangeNotifier {
     return availableQuestions[_random.nextInt(availableQuestions.length)];
   }
 
+void _showVictoryDialog(BuildContext context, int winningTeam) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // L'utilisateur ne peut pas fermer la modal en cliquant en dehors
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Victoire !"),
+        content: Text("L'équipe $winningTeam a gagné !"),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              resetGame(); // Réinitialiser la partie
+              Navigator.of(context).pop(); // Fermer la modal
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => GameScreen()), // Recharger l'écran de jeu
+              );
+            },
+            child: Text("Rejouer"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 void answerQuestion(String answer, BuildContext context) {
   bool isCorrect = currentQuestion.correctAnswer == answer;
 
@@ -53,18 +81,23 @@ void answerQuestion(String answer, BuildContext context) {
 
     // Si on atteint 3 bonnes réponses consécutives, on doit poser une question camembert
     if (_correctAnswersInARow >= CAMEMBERT_REQUIRED_ANSWERS) {
-      // Ne réinitialise PAS ici le compteur à 0
       chooseCamembertCategory(context); // Afficher la question camembert
-      return; // On ne passe pas à la question suivante pour l'instant
+      return;
+    }
+
+    // Vérifier si l'équipe actuelle a gagné après une réponse correcte
+    if (hasWon(_currentTeam)) {
+      _showVictoryDialog(context, _currentTeam);
+      return;
     }
   } else {
     _switchTeam(); // Si la réponse est fausse, on change d'équipe
-    _correctAnswersInARow = 0; // Réinitialiser le compteur si la réponse est fausse
+    _correctAnswersInARow = 0; // Réinitialiser le compteur
   }
 
   // Passer à la question suivante uniquement si on n'a pas atteint le camembert
   if (_currentQuestionIndex < questions.length - 1) {
-   _currentQuestionIndex++;
+    _currentQuestionIndex++;
   } else {
     print('Toutes les questions ont été répondues.');
     resetGame();
@@ -114,7 +147,6 @@ void _askCamembertQuestion(String category, BuildContext context) {
   if (categoryQuestions.isNotEmpty) {
     Question camembertQuestion = categoryQuestions[_random.nextInt(categoryQuestions.length)];
 
-    // Afficher la question dans une nouvelle modal
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -131,14 +163,14 @@ void _askCamembertQuestion(String category, BuildContext context) {
                     bool isCorrect = option == camembertQuestion.correctAnswer;
 
                     if (isCorrect) {
-                      _addCamembertToCurrentTeam(); // Ajouter le camembert
-                      Navigator.pop(context); // Fermer la modal après bonne réponse
-                      Navigator.pop(context); // Fermer la modal de choix des catégories
+                      _addCamembertToCurrentTeam(context, category); // Utilise la bonne catégorie
+                      Navigator.pop(context); // Ferme la modale après bonne réponse
+                      Navigator.pop(context); // Ferme la modale de choix des catégories
                     } else {
-                      _correctAnswersInARow = 0; // Réinitialiser le compteur à 0 après mauvaise réponse
-                      _switchTeam(); // Passer à l'autre équipe
-                      Navigator.pop(context); // Fermer la modal après mauvaise réponse
-                      Navigator.pop(context); // Fermer la modal de choix des catégories
+                      _correctAnswersInARow = 0; // Réinitialise le compteur
+                      _switchTeam(); // Passe à l'autre équipe
+                      Navigator.pop(context); // Ferme la modale après mauvaise réponse
+                      Navigator.pop(context); // Ferme la modale de choix des catégories
                     }
                   },
                   child: Text(option),
@@ -153,19 +185,26 @@ void _askCamembertQuestion(String category, BuildContext context) {
 }
 
 
-void _addCamembertToCurrentTeam() {
-  String currentCategory = currentQuestion.category;
-
+void _addCamembertToCurrentTeam(BuildContext context, String category) {
   if (_currentTeam == 1) {
-    _camembertEquipe1[_currentTeam]!.add(currentCategory);
+    _camembertEquipe1[1]!.add(category);
+    print("Camembert ajouté pour l'équipe 1 : ${_camembertEquipe1[1]}");
   } else {
-    _camembertEquipe2[_currentTeam]!.add(currentCategory);
+    _camembertEquipe2[2]!.add(category);
+    print("Camembert ajouté pour l'équipe 2 : ${_camembertEquipe2[2]}");
   }
 
-  _switchTeam(); // Passer à l'équipe suivante
-  _correctAnswersInARow = 0; // Réinitialiser le compteur après la question camembert
+  // Vérifie si l'équipe a gagné
+  if (hasWon(_currentTeam)) {
+    _showVictoryDialog(context, _currentTeam);
+    return;
+  }
+
+  _switchTeam();
+  _correctAnswersInARow = 0;
   notifyListeners();
 }
+
 
 
 
