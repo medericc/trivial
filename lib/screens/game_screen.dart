@@ -10,10 +10,20 @@ class GameScreen extends StatelessWidget {
     final currentQuestion = gameProvider.currentQuestion;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Tour de l\'équipe ${gameProvider.currentTeam}'),
-        backgroundColor: Colors.deepPurple,
-      ),
+   appBar: AppBar(
+  title: Text(
+    'Tour de l\'équipe ${gameProvider.currentTeam}',
+    style: TextStyle(
+      fontFamily: 'Roboto',
+      color: const Color.fromARGB(255, 255, 255, 255),
+    ),
+  ),
+  backgroundColor: Colors.blue[700],
+  iconTheme: IconThemeData(
+    color: Colors.white, // Changer la couleur de la croix ici
+  ),
+),
+
       body: Padding(
         padding: const EdgeInsets.all(8.0), // Réduction du padding général
         child: Column(
@@ -39,7 +49,7 @@ class GameScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
+                  color: const Color.fromARGB(255, 2, 2, 2),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -52,7 +62,7 @@ class GameScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16.0, // Taille de texte réduite
                 fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+                color: Colors.blue[700],
               ),
               textAlign: TextAlign.center,
             ),
@@ -68,7 +78,7 @@ class GameScreen extends StatelessWidget {
                 children: currentQuestion.options.map((option) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple.shade200,
+                      backgroundColor: Colors.blue[700],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

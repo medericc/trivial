@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Color.fromARGB(255, 80, 54, 20),
         toolbarHeight: 100,
       ),
       body: Stack(
@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[700],
+          backgroundColor: Color.fromARGB(255, 80, 54, 20),
           padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
