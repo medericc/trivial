@@ -55,7 +55,7 @@ void _showVictoryDialog(BuildContext context, int winningTeam) {
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text("Victoire !"),
-        content: Text("L'équipe $winningTeam a gagné !"),
+        content: Text("L'équipe $winningTeam a gagné !"), // Message simple
         actions: [
           ElevatedButton(
             onPressed: () {
@@ -72,6 +72,7 @@ void _showVictoryDialog(BuildContext context, int winningTeam) {
     },
   );
 }
+
 
 void answerQuestion(String answer, BuildContext context) {
   bool isCorrect = currentQuestion.correctAnswer == answer;
@@ -196,7 +197,7 @@ void _addCamembertToCurrentTeam(BuildContext context, String category) {
     print("Camembert ajouté pour l'équipe 2 : ${_camembertEquipe2[2]}");
   }
 
-  // Vérifie si l'équipe a gagné
+  // Vérifie si l'équipe a gagné après l'ajout du camembert
   if (hasWon(_currentTeam)) {
     _showVictoryDialog(context, _currentTeam);
     return;
