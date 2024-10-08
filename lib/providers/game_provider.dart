@@ -163,15 +163,18 @@ void _askCamembertQuestion(String category, BuildContext context) {
                     bool isCorrect = option == camembertQuestion.correctAnswer;
 
                     if (isCorrect) {
-                      _addCamembertToCurrentTeam(context, category); // Utilise la bonne catégorie
-                      Navigator.pop(context); // Ferme la modale après bonne réponse
-                      Navigator.pop(context); // Ferme la modale de choix des catégories
+                      // Si l'équipe réussit la question camembert
+                      _addCamembertToCurrentTeam(context, category); // Ajouter le camembert
                     } else {
-                      _correctAnswersInARow = 0; // Réinitialise le compteur
-                      _switchTeam(); // Passe à l'autre équipe
-                      Navigator.pop(context); // Ferme la modale après mauvaise réponse
-                      Navigator.pop(context); // Ferme la modale de choix des catégories
+                      // Si l'équipe échoue à la question camembert
+                      _correctAnswersInARow = 0; // Remettre à zéro le compteur
+                      _currentQuestionIndex = 0; // Remettre à zéro le compteur des questions
+                      _switchTeam(); // Passer immédiatement à l'autre équipe
+                      notifyListeners(); // Mise à jour de l'état pour refléter les changements
                     }
+
+                    Navigator.pop(context); // Fermer la modale après la réponse
+                    Navigator.pop(context); // Fermer la modale de choix des catégories
                   },
                   child: Text(option),
                 );
@@ -183,7 +186,6 @@ void _askCamembertQuestion(String category, BuildContext context) {
     );
   }
 }
-
 
 void _addCamembertToCurrentTeam(BuildContext context, String category) {
   if (_currentTeam == 1) {
