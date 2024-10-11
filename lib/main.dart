@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'providers/game_provider.dart';
 
+// Main sans chargement des variables d'environnement
 void main() {
+  // Démarrer directement l'application sans charger les variables d'environnement
   runApp(TrivialPursuitApp());
 }
 
